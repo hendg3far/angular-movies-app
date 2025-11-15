@@ -1,0 +1,15 @@
+@use 'utilities/variables' as *;
+
+
+.navbar {
+    padding-top: 1.5rem;
+}
+
+.nav-link {
+    color: $text-color-grey;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.show {
+    color: $base-font-color;
+}
