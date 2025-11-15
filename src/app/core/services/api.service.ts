@@ -1,0 +1,55 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ApiService {
+  private language = 'en-US';
+  constructor(private http: HttpClient) {}
+
+  getNowPlaying() {}
+
+  private handleError(error: any): Observable<never> {
+    let errorMessage = 'Something went wrong';
+
+    if (error instanceof HttpErrorResponse) {
+      if (!navigator.onLine) {
+        errorMessage = 'No internet connection';
+      } else {
+        switch (error.status) {
+          case 0:
+            errorMessage = 'Unable to connect to the server';
+            break;
+          case 400:
+            errorMessage = 'Bad request';
+            break;
+          case 401:
+            errorMessage = 'Unauthorized';
+            break;
+          case 403:
+            errorMessage = 'Access denied';
+            break;
+          case 404:
+            errorMessage = 'Resource not found';
+            break;
+          case 500:
+            errorMessage = 'Internal server error';
+            break;
+          default:
+            errorMessage = `Unexpected error: ${error.status}`;
+        }
+      }
+    } else if (error instanceof ErrorEvent) {
+      errorMessage =
+        error.error?.message || error.message || 'Client error occurred';
+    } else {
+      errorMessage = 'Unexpected error occurred';
+    }
+
+    console.error('Error:', error);
+
+    return throwError(() => new Error(errorMessage));
+  }
+}
