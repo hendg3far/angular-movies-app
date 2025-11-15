@@ -1,15 +1,40 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { catchError, Observable, retry, throwError } from 'rxjs';
+import { MovieListResponse } from '../models/movie';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
+  private apiUrl = environment.apiUrl;
+  private apiKey = environment.apiKey;
   private language = 'en-US';
-  constructor(private http: HttpClient) {}
 
-  getNowPlaying() {}
+
+  constructor(private http: HttpClient) { }
+
+  private buildParams(params: any): HttpParams {
+    let httpParams = new HttpParams().set('api_key', this.apiKey).set('language', this.language);
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    }
+    return httpParams;
+  }
+
+
+  getNowPlaying(mediaType: string, page: number): Observable<MovieListResponse> {
+    const params = this.buildParams({ page: page.toString() });
+
+    return this.http
+      .get<MovieListResponse>(`${this.apiUrl}/${mediaType}/now_playing`, { params })
+      .pipe(
+        catchError(this.handleError.bind(this))
+      );
+  }
 
   private handleError(error: any): Observable<never> {
     let errorMessage = 'Something went wrong';
