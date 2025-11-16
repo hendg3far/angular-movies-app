@@ -1,9 +1,59 @@
-<swiper #swiper [virtual]="true">
-    <ng-template swiperSlide>Slide 1</ng-template>
-    <ng-template swiperSlide>Slide 2</ng-template>
-    <ng-template swiperSlide>Slide 3</ng-template>
-    <ng-template swiperSlide>Slide 4</ng-template>
-    <ng-template swiperSlide>Slide 5</ng-template>
-    <ng-template swiperSlide>Slide 6</ng-template>
-    <ng-template swiperSlide>Slide 7</ng-template>
-</swiper>
+<swiper-container slides-per-view="1" loop="true" autoplay='{"delay": 3000, "disableOnInteraction": false}'
+    effect="fade" speed="1000" class="hero">
+
+    @for (slide of slides; track $index) {
+    <swiper-slide class="swiper-slide"
+        [style.background-image]="'url(https://image.tmdb.org/t/p/original/' + slide?.backdrop_path + ')'">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h1 class="name" [routerLink]="[slide.link]">
+                        {{slide?.title || slide?.name}}
+                    </h1>
+                    <div class="meta">
+                        <div class="rating">
+                            <div class="stars">
+                                <div [style.width.%]="(slide.vote_average / 10) * 100"></div>
+                            </div>
+                            <div *ngIf="slide.vote_count > 0">
+                                {{ slide.vote_count | numberWithCommas }} Reviews
+                            </div>
+                        </div>
+                        <div class="info">
+                            <span *ngIf="slide.number_of_seasons">Season {{ slide.number_of_seasons }}</span>
+                            <span *ngIf="slide?.release_date || slide?.first_air_date">{{ slide?.release_date ||
+                                slide?.first_air_date |
+                                date }}</span>
+                        </div>
+                    </div>
+                    <div class="desc">
+                        {{ slide?.overview | truncate }}
+                    </div>
+                    <!-- <button *ngIf="slide.videoId" type="button" class="button button--icon trailer"
+                    (click)="openTrailer(slide)">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="#fff">
+                            <path d="M3 22v-20l18 10-18 10z"></path>
+                        </svg>
+                    </span>
+                    <span class="txt">Watch Trailer</span>
+                </button> -->
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- <div class="backdrop">
+            <div class="lazyloaded">
+                <img alt="{{slide?.title || slide?.name}}" class="lazyload image"
+                    src="https://image.tmdb.org/t/p/original/{{slide?.backdrop_path}}">
+            </div>
+        </div> -->
+
+    </swiper-slide>
+    }
+
+</swiper-container>
